@@ -23,8 +23,8 @@ if getattr(sys, "frozen", False):
 else:
     BASE_DIR = Path(__file__).parent
 
-CONFIG_FILE = BASE_DIR / "config.json"
-LOG_FILE = BASE_DIR / "send_log.txt"
+CONFIG_FILE = BASE_DIR / "data/config.json"
+LOG_FILE = BASE_DIR / "log/send_log.txt"
 
 scheduler_thread = None
 stop_event = threading.Event()
@@ -249,29 +249,32 @@ def register_weekly_tasks() -> None:
         else:
             write_log(f"无效星期配置：{weekday}")
 
-        key = (weekday, send_time)
-        grouped_tasks.setdefault(key, []).append(task)
+        if weekday in ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]:
+            key = (weekday, send_time)
+            grouped_tasks.setdefault(key, []).append(task)
 
     for (weekday, send_time), task_list in grouped_tasks.items():
 
         job = lambda ts=task_list: run_task_batch(ts)
 
-        if weekday in ["monday", "1"]:
-            schedule.every().monday.at(send_time).do(job)
-        elif weekday in ["tuesday", "2"]:
-            schedule.every().tuesday.at(send_time).do(job)
-        elif weekday in ["wednesday", "3"]:
-            schedule.every().wednesday.at(send_time).do(job)
-        elif weekday in ["thursday", "4"]:
-            schedule.every().thursday.at(send_time).do(job)
-        elif weekday in ["friday", "5"]:
-            schedule.every().friday.at(send_time).do(job)
-        elif weekday in ["saturday", "6"]:
-            schedule.every().saturday.at(send_time).do(job)
-        elif weekday in ["sunday", "7"]:
-            schedule.every().sunday.at(send_time).do(job)
-        else:
-            write_log(f"无效星期配置：{weekday}")
+        getattr(schedule.every(), weekday).at(send_time).do(job)
+
+        # if weekday in ["monday", "1"]:
+        #     schedule.every().monday.at(send_time).do(job)
+        # elif weekday in ["tuesday", "2"]:
+        #     schedule.every().tuesday.at(send_time).do(job)
+        # elif weekday in ["wednesday", "3"]:
+        #     schedule.every().wednesday.at(send_time).do(job)
+        # elif weekday in ["thursday", "4"]:
+        #     schedule.every().thursday.at(send_time).do(job)
+        # elif weekday in ["friday", "5"]:
+        #     schedule.every().friday.at(send_time).do(job)
+        # elif weekday in ["saturday", "6"]:
+        #     schedule.every().saturday.at(send_time).do(job)
+        # elif weekday in ["sunday", "7"]:
+        #     schedule.every().sunday.at(send_time).do(job)
+        # else:
+        #     write_log(f"无效星期配置：{weekday}")
 
         write_log(f"已注册任务：{weekday} {send_time}，发送对象：{task.get('group_name')}，发送内容：{task.get('message')}，图片：{task.get('image_path')}")
 

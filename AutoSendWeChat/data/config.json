@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "comment":"测试用例",
+      "group_name": "文件传输助手",
+      "message": "测试文字定时自动发送",
+      "image_path":"",
+      "weekday": "sunday",
+      "time": "16:59",
+      "enabled": true
+    },
+    {
+      "comment":"测试用例",
+      "group_name": "文件传输助手",
+      "message": "",
+      "image_path":"D:\\work\\兼职\\卤味店\\菜单.jpg",
+      "weekday": 7,
+      "time": "16:59",
+      "enabled": true
+    }
+  ]
+}
