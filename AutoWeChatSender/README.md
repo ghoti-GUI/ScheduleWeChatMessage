@@ -12,16 +12,22 @@ python main.py
 python -m PyInstaller -F --noconsole --name AutoWeChatSender --paths . main.py
 ```
 
+## 测试
+```bash
+python -m unittest discover -s tests -v
+```
+
 ## 目录说明
 
 ```text
-models/       数据模型
-services/     业务服务：微信、配置、日志、定时器
-viewmodels/   ViewModel，连接界面和业务服务
-views/        tkinter 界面和托盘
-data/         外部可修改配置文件
-log/          日志文件
-main.py       程序入口
+models/         数据模型
+services/        业务服务：微信、配置、日志、定时器
+viewmodels/     ViewModel，连接界面和业务服务
+views/          tkinter 界面和托盘
+data/           外部可修改配置文件
+log/            日志文件
+main.py         程序入口
+tests/          测试文件
 ```
 
 ## 配置文件

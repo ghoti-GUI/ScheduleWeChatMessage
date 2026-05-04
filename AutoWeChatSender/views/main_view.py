@@ -1,10 +1,9 @@
 import threading
 import tkinter as tk
-
 import pystray
 from PIL import Image, ImageDraw
 
-from AutoWeChatSender.viewmodels.main_viewmodel import MainViewModel
+# from viewmodels.main_viewmodel import MainViewModel
 
 
 class MainView:
@@ -14,7 +13,7 @@ class MainView:
     不直接处理微信、配置、日志、定时器细节。
     """
 
-    def __init__(self, viewmodel:MainViewModel):
+    def __init__(self, viewmodel):
         self.viewmodel = viewmodel
         self.root = tk.Tk()
         self.tray_icon = None
