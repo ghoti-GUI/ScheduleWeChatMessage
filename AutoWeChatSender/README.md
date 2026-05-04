@@ -39,3 +39,41 @@ exe所在目录/data/config.json
 ```
 
 程序第一次运行时会自动创建。
+
+
+## 测试说明
+
+本项目使用 Python 内置的 `unittest` 作为测试框架。
+
+测试代码位于：
+
+```text
+tests/
+├─ test_00_compile.py
+├─ test_01_imports.py
+├─ test_02_config_log.py
+├─ test_03_wechat_service.py
+├─ test_04_scheduler_service.py
+├─ test_05_viewmodel.py
+└─ test_06_view.py
+```
+
+运行全部测试：  
+```bash
+python -m unittest discover -s tests -v
+```
+
+运行单个测试文件：  
+```bash
+python -m unittest tests.test_02_config_log -v
+```
+
+运行单个测试类：  
+```bash
+python -m unittest tests.test_02_config_log.TestConfigAndLog -v
+```
+
+运行单个测试方法：  
+```bash
+python -m unittest tests.test_02_config_log.TestConfigAndLog.test_log_service_write_log -v
+```
