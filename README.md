@@ -18,6 +18,13 @@
 `group_name`：想要发送消息的群组/好友名字
 `message`：发送的文字消息
 `image_path`：发送的图片消息（图片路径）
-`weekday`：星期几，例子：“monday”，“Monday”，1，“1”，“周日”，“周天”，“星期日”，“星期天”，“周七”，“星期七”
+`weekday`：星期几，例子：“monday”，“Monday”，1，“1”，“周日”，“周天”，“星期日”，“星期天”
 `time`：具体发送时间，格式“11:23”
 `enabled`：true表示启动该条信息的定时发送，false表示禁用该条消息的定时发送
+
+# build指令
+`
+cd AutoSendWeChat
+
+python -m PyInstaller -F --noconsole --name AutoSendWeChat --paths . --hidden-import autoSendMessage --hidden-import hide scheduleApp.py
+`  
