@@ -5,6 +5,8 @@ import schedule
 
 from models.send_task import SendTask
 
+import uiautomation as auto
+
 
 class SchedulerService:
     """
@@ -90,22 +92,23 @@ class SchedulerService:
             )
 
     def start(self) -> None:
-        schedule.clear()
-        self.register_weekly_tasks()
+        with auto.UIAutomationInitializerInThread():
+            schedule.clear()
+            self.register_weekly_tasks()
 
-        self.log_service.write("定时发送程序已启动")
+            self.log_service.write("定时发送程序已启动")
 
-        while not self.stop_event.is_set():
-            try:
-                schedule.run_pending()
-                time.sleep(1)
-            except Exception as e:
-                self.log_service.write(f"定时器运行异常：{e}")
-                time.sleep(1)
+            while not self.stop_event.is_set():
+                try:
+                    schedule.run_pending()
+                    time.sleep(1)
+                except Exception as e:
+                    self.log_service.write(f"定时器运行异常：{e}")
+                    time.sleep(1)
 
-        schedule.clear()
-        self.wechat_service.clear_current_group()
-        self.log_service.write("定时发送程序已停止")
+            schedule.clear()
+            self.wechat_service.clear_current_group()
+            self.log_service.write("定时发送程序已停止")
 
     def start_thread(self) -> bool:
         if self.scheduler_thread and self.scheduler_thread.is_alive():
