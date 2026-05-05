@@ -2,15 +2,10 @@ from services.config_service import ConfigService
 from services.log_service import LogService
 from services.scheduler_service import SchedulerService
 from services.wechat_service import WeChatService
+from viewmodels.settings_viewmodel import SettingsViewModel
 
 
 class MainViewModel:
-    """
-    ViewModel：
-    - View 只调用这里；
-    - View 不直接接触 WeChatService / SchedulerService；
-    - 以后要增加 AI 代理、订单、库存等功能，也从这里暴露给界面。
-    """
 
     def __init__(self):
         self.log_service = LogService()
@@ -20,6 +15,11 @@ class MainViewModel:
         self.scheduler_service = SchedulerService(
             config_service=self.config_service,
             wechat_service=self.wechat_service,
+            log_service=self.log_service
+        )
+
+        self.settings_viewmodel = SettingsViewModel(
+            config_service=self.config_service,
             log_service=self.log_service
         )
 
@@ -48,3 +48,20 @@ class MainViewModel:
 
     def is_running(self) -> bool:
         return self.scheduler_service.is_running()
+
+    def get_hide_to_tray(self) -> bool:
+        return self.settings_viewmodel.get_hide_to_tray()
+
+    def get_ask_on_close(self) -> bool:
+        return self.settings_viewmodel.get_ask_on_close()
+
+    def save_close_settings(
+        self,
+        hide_to_tray: bool,
+        ask_on_close: bool
+    ) -> tuple[bool, str]:
+        return self.settings_viewmodel.save_close_settings(
+            hide_to_tray=hide_to_tray,
+            ask_on_close=ask_on_close
+        )
+    

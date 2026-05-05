@@ -9,7 +9,7 @@ class SendTask:
     image_path: str = ""
     weekday: str = ""
     time: str = ""
-    enabled: bool = True
+    enabled: bool = False
 
     @classmethod
     def from_dict(cls, data: dict) -> "SendTask":
@@ -20,5 +20,5 @@ class SendTask:
             image_path=str(data.get("image_path", "")),
             weekday=str(data.get("weekday", "")),
             time=str(data.get("time", "")),
-            enabled=bool(data.get("enabled", True)),
+            enabled=bool(data.get("enabled", False)),
         )

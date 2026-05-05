@@ -1,12 +1,16 @@
 {
+    "settings": {
+        "hide_to_tray": false,
+        "ask_on_close": false
+    },
     "tasks": [
         {
             "comment": "测试用例",
             "group_name": "文件传输助手",
             "message": "测试文字定时自动发送",
             "image_path": "",
-            "weekday": "sunday",
-            "time": "18:00",
+            "weekday": "2",
+            "time": "15:11",
             "enabled": true
         },
         {

@@ -3,7 +3,9 @@ import tkinter as tk
 import pystray
 from PIL import Image, ImageDraw
 
-# from viewmodels.main_viewmodel import MainViewModel
+from viewmodels.main_viewmodel import MainViewModel
+from views.close_confirm_dialog import CloseConfirmDialog
+from views.settings_view import SettingsView
 
 
 class MainView:
@@ -13,7 +15,7 @@ class MainView:
     不直接处理微信、配置、日志、定时器细节。
     """
 
-    def __init__(self, viewmodel):
+    def __init__(self, viewmodel: MainViewModel):
         self.viewmodel = viewmodel
         self.root = tk.Tk()
         self.tray_icon = None
@@ -27,9 +29,9 @@ class MainView:
 
     def init_window(self) -> None:
         self.root.title("微信定时发送工具")
-        self.root.geometry("360x180")
+        self.root.geometry("360x250")
         self.root.resizable(False, False)
-        self.root.protocol("WM_DELETE_WINDOW", self.hide_to_tray)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close_button_click)
 
     def build_ui(self) -> None:
         title_label = tk.Label(
@@ -59,6 +61,14 @@ class MainView:
             command=self.stop_button_click
         )
         stop_btn.grid(row=0, column=1, padx=8)
+
+        settings_btn = tk.Button(
+            self.root,
+            text="设置",
+            width=12,
+            command=self.open_settings_window
+        )
+        settings_btn.pack(pady=4)
 
         status_frame = tk.Frame(self.root)
         status_frame.pack(pady=10)
@@ -125,10 +135,67 @@ class MainView:
     def hide_to_tray(self) -> None:
         self.root.withdraw()
 
+    def on_close_button_click(self) -> None:
+        ask_on_close = self.viewmodel.get_ask_on_close()
+
+        if not ask_on_close:
+            hide_to_tray = self.viewmodel.get_hide_to_tray()
+
+            if hide_to_tray:
+                self.hide_to_tray()
+            else:
+                self.quit_app()
+
+            return
+
+        dialog = CloseConfirmDialog(self.root)
+        result = dialog.show()
+
+        if not result:
+            return
+
+        action = result.get("action")
+        do_not_ask_again = result.get("do_not_ask_again", False)
+
+        if action == "cancel":
+            return
+
+        if action == "hide_to_tray":
+            if do_not_ask_again:
+                self.viewmodel.save_close_settings(
+                    hide_to_tray=True,
+                    ask_on_close=False
+                )
+
+            self.hide_to_tray()
+            return
+
+        if action == "exit_app":
+            if do_not_ask_again:
+                self.viewmodel.save_close_settings(
+                    hide_to_tray=False,
+                    ask_on_close=False
+                )
+
+            self.quit_app()
+            return
+        
+    def open_settings_window(self) -> None:
+        SettingsView(
+            parent=self.root,
+            settings_viewmodel=self.viewmodel.settings_viewmodel,
+            on_saved=self.refresh_settings
+        )
+
+    def refresh_settings(self) -> None:
+        # self.set_status_info("设置已更新")
+        return
+
     def setup_tray(self) -> None:
         menu = pystray.Menu(
             pystray.MenuItem("显示窗口", self.show_window),
-            pystray.MenuItem("退出程序", self.quit_app)
+            pystray.MenuItem("退出程序", self.quit_app), 
+            pystray.MenuItem("编辑消息", None) # todo: 增加从托盘标签进入消息编辑页面
         )
 
         self.tray_icon = pystray.Icon(
